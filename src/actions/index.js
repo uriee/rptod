@@ -1,10 +1,45 @@
 export const REQUEST_SERIALS = 'REQUEST_SERIALS'
+export const REQUEST_ACTIONS = 'REQUEST_ACTIONS'
 export const RECEIVE_SERIALS = 'RECEIVE_SERIALS'
+export const RECEIVE_ACTIONS = 'RECEIVE_ACTIONS'
 export const SELECT_ACTION = 'SELECT_SERIAL'
 export const INVALIDATE_ACTION = 'INVALIDATE_SERIAL'
 export const SENT_REPORT = 'SENT_REPORT'
 export const SEND_REPORT = 'SEND_REPORT'
+export const LOGIN = 'LOGIN'
+export const SETUSER = 'SETUSER'
+export const ERROR = 'ERROR'
+const server = 'http://192.9.200.17:4001'
 
+export const login = (obj,dispatch) => ({
+  type: 'LOGIN',
+  obj: log(obj.username,obj.password)(dispatch)
+})
+
+export const setUser = (user) => ({
+  type: 'SETUSER',
+  user: user.user,
+  username: user.username
+})
+
+const log = (username,password) => dispatch => {
+  username = username||'None'
+  password = password||'None'
+  return fetch(`${server}/login/${username}/${password}`)
+    .then(response => response.json())
+    .then(json => {
+          console.log("qqqqq----",json)
+        const user = (json[0] ?  json[0].USR : -1)
+        const username = (json[0] ?  json[0].USERNAME : '')
+        dispatch(fetchActions(user))
+        dispatch(setUser({user: user, username: username}))
+      })  
+}
+
+export const error =   errNum => ({
+  type: ERROR,
+  errNum: errNum
+})
 
 
 export const selectAction = action => ({
@@ -24,6 +59,10 @@ export const requestSerials = action => ({
   action
 })
 
+export const requestActions = user => ({
+  type: REQUEST_ACTIONS,
+  user
+})
 
 export const receiveSerials = (action, json) => ({
   type: RECEIVE_SERIALS,
@@ -32,14 +71,21 @@ export const receiveSerials = (action, json) => ({
   receivedAt: Date.now()
 })
 
+export const receiveActions = (action, json) => ({
+  type: RECEIVE_ACTIONS,
+  action : action,
+  actions: json.map(act => act),
+})
+
 const sendR = obj => dispatch => {
   console.log("SENDR",obj)
-  return fetch(`http://192.9.200.17:4001/insertprod/${obj.serial}/${obj.action}/${obj.quant}`)
+  return fetch(`${server}/insertprod/${obj.serial}/${obj.action}/${obj.quant}`)
     .then(response => response.json())
-    .then(json => dispatch(sentReport(obj, json)))  
+    .then(json => dispatch(sentReport(obj, json)))
+    .then(json => dispatch(fetchSerials(obj.actname)))  
 }
 
-export const sendReport = obj => dispatch => ({
+export const sendReport = (obj,dispatch) => ({
   type: 'SEND_REPORT',
   obj: sendR(obj)(dispatch)
 })
@@ -54,9 +100,18 @@ const sentReport = (action, json) => ({
 
 const fetchSerials = action => dispatch => {
   dispatch(requestSerials(action))
-  return fetch(`http://192.9.200.17:4001/prod/${action}`)
+  return fetch(`${server}/prod/${action}`)
     .then(response => response.json())
     .then(json => dispatch(receiveSerials(action, json)))
+}
+
+
+const fetchActions = user => dispatch => {
+  if(user < 0)  dispatch(error(1));  
+    dispatch(requestActions(user))
+    return fetch(`${server}/useraction/${user}`)
+    .then(response => response.json())
+    .then(json => dispatch(receiveActions(user, json)))
 }
 
 

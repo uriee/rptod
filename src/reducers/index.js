@@ -1,14 +1,36 @@
 import { combineReducers } from 'redux'
 import {
   SELECT_ACTION, INVALIDATE_ACTION,
-  REQUEST_SERIALS, RECEIVE_SERIALS, SENT_REPORT
+  REQUEST_SERIALS, RECEIVE_SERIALS, SENT_REPORT,
+  REQUEST_ACTIONS, RECEIVE_ACTIONS, SETUSER, ERROR
 } from '../actions'
+
+
+const error = (state ={}, action) => {
+  switch (action.type) {
+    case ERROR:
+      return({errNum : action.errNum})  
+    default:
+      return state
+  }
+}
+
+const logIn = (state ={}, action) => {
+  switch (action.type) {
+    case SETUSER:
+      return {...state,
+              user: action.user,
+              username: action.username
+              }
+    default:
+      return state
+  }
+}
 
 
 const sentReport = (state ={}, action) => {
   switch (action.type) {
     case SENT_REPORT:
-      console.log("sent:",state) 
       return state
     default:
       return state
@@ -19,6 +41,8 @@ const selectedAction = (state = 'None', action) => {
   switch (action.type) {
     case SELECT_ACTION:
       return action.action
+    case SETUSER:
+      if (action.user === -1) return 'None'; else return state  
     default:
       return state
   }
@@ -54,6 +78,7 @@ const serials = (state = {
   }
 }
 
+
 const serialsByAction = (state = { }, action) => {
   switch (action.type) {
     case INVALIDATE_ACTION:
@@ -63,6 +88,26 @@ const serialsByAction = (state = { }, action) => {
         ...state,
         [action.action]: serials(state[action.action], action)
       }
+    case SETUSER:
+      if (action.user === -1) return {}; else return state  
+    default:
+      return state
+  }
+}
+
+const actionsByLogin = (state = { }, action) => {
+  switch (action.type) {
+    case RECEIVE_ACTIONS:
+      return {
+        ...state,
+        actions : action.actions.map((act) => act.ACTNAME)
+      }    
+    case REQUEST_ACTIONS:
+      return {
+        ...state
+      }
+    case SETUSER:
+      if (action.user === -1) return {}; else return state   
     default:
       return state
   }
@@ -70,8 +115,11 @@ const serialsByAction = (state = { }, action) => {
 
 const rootReducer = combineReducers({
   serialsByAction,
+  actionsByLogin,
   selectedAction,
-  sentReport
+  sentReport,
+  logIn,
+  error,
 })
 
 export default rootReducer

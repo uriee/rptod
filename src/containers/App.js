@@ -1,17 +1,21 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import {selectAction, fetchSerialsIfNeeded, invalidateAction ,sendReport} from '../actions'
+import {selectAction, fetchSerialsIfNeeded, invalidateAction ,sendReport, login, setUser} from '../actions'
 import Picker from '../components/Picker'
+import Login from '../components/Login'
+import Logout from '../components/Logout'
 import Serials from '../components/Serials'
 
 class App extends Component {
   static propTypes = {
     selectedAction: PropTypes.string.isRequired,
     serials: PropTypes.array.isRequired,
+    actions: PropTypes.array.isRequired,    
     isFetching: PropTypes.bool.isRequired,
     lastUpdated: PropTypes.number,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    user: PropTypes.number
   }
 
   componentDidMount() {
@@ -30,10 +34,24 @@ class App extends Component {
     this.props.dispatch(selectAction(nextAction))
   }
 
-  send = obj => {
+  send = (obj,dispatch) => {
     console.log("OBJ:",obj)
-    this.props.dispatch(sendReport(obj))
+    this.props.dispatch(sendReport(obj,this.props.dispatch))
   }
+
+  handleLogin = (obj) => {
+    console.log("login:",obj)
+    this.props.dispatch(login(obj,this.props.dispatch))
+  }  
+
+  handleLogout = () => {
+    this.props.dispatch(setUser({user: -1, username: ''}))
+  } 
+
+  handleError = () => {
+    window.alert("No such username or password.");
+    this.props.dispatch(setUser({user: -1, username: ''}))
+  } 
 
   handleRefreshClick = e => {
     e.preventDefault()
@@ -43,13 +61,18 @@ class App extends Component {
   }
 
   render() {
-    const { selectedAction, serials, isFetching, lastUpdated } = this.props
+    const { selectedAction, serials, isFetching, lastUpdated, actions, user, username } = this.props
     const isEmpty = serials.length === 0
+    console.log("aaaa",actions,)
+    //[ 'None', 'FQC', 'SMT CS', 'WAVE SIDE 1', 'TU']
     return (
       <div>
+      {(user === -1  ? <Login login={this.handleLogin} /> : <Logout username={username} logout={this.handleLogout} />)}
+      {(user === -1  ? <div/> : 
+        <div>
         <Picker value={selectedAction}
                 onChange={this.handleChange}
-                options={[ 'None', 'FQC', 'SMT CS', 'WAVE SIDE 1', 'TU']} />
+                options={ actions } />
         <p>
           {lastUpdated &&
             <span>
@@ -69,13 +92,15 @@ class App extends Component {
               <Serials serials={serials} send={this.send}/>
             </div>
         }
+        </div>
+        )}
       </div>
     )
   }
 }
 
 const mapStateToProps = state => {
-  const { selectedAction, serialsByAction } = state
+  const { selectedAction, serialsByAction, actionsByLogin, logIn } = state
   const {
     isFetching,
     lastUpdated,
@@ -84,12 +109,19 @@ const mapStateToProps = state => {
     isFetching: true,
     items: []
   }
+  console.log("--------")
+  const actions = actionsByLogin.actions || []
+  const user = logIn.user || -1
+  const username = logIn.username
 
   return {
     selectedAction,
     serials,
     isFetching,
-    lastUpdated
+    lastUpdated,
+    actions,
+    user,
+    username
   }
 }
 

@@ -6,19 +6,20 @@ let Qinp = ({serial,send}) => {
 
   return (
     <div>
-      <form onSubmit={e => {
+     <form onSubmit={e => {
         e.preventDefault()
         if (!input.value.trim()) {
           return
         }
-        var ret = {serial: serial.SERIAL, action: serial.ACT, quant: input.value}
+        var ret = {serial: serial.SERIAL, action: serial.ACT, actname:serial.ACTNAME, quant: input.value}
         send(ret)
         input.value = ''
       }}>
+        <span>{serial.SERIALNAME}</span> : <span>{serial.PARTNAME}</span> : <span>{serial.QUANT/1000}</span><br/>      
         <input ref={node => {
           input = node
         }} />
-        <button type="submit">
+        <button className='button -blue center' type="submit">
           Send
         </button>
       </form>
