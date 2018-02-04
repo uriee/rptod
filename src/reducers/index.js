@@ -6,10 +6,13 @@ import {
 } from '../actions'
 
 
-const error = (state ={}, action) => {
+const error = (state ={ errnum:0, error:"" }, action) => {
   switch (action.type) {
     case ERROR:
-      return({errNum : action.errNum})  
+      return({
+        errNum : action.errNum,
+        error : action.errmsg 
+      })  
     default:
       return state
   }
@@ -37,12 +40,12 @@ const sentReport = (state ={}, action) => {
   }
 }
 
-const selectedAction = (state = 'None', action) => {
+const selectedAction = (state = '-', action) => {
   switch (action.type) {
     case SELECT_ACTION:
       return action.action
     case SETUSER:
-      if (action.user === -1) return 'None'; else return state  
+      if (action.user === -1) return '-'; else return state  
     default:
       return state
   }

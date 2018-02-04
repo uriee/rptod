@@ -7,22 +7,23 @@ let username,password
     <div>
       <form onSubmit={e => {
         e.preventDefault()
-        var ret = {username: username.value, password:  password.value}
+        var ret = {username: username.value, password:  password.value, error:error}
         login(ret)
       }}>
         <h3>Sign in</h3>
         <input type="text" ref={ el => username = el } placeholder="enter you username" />
         <input type="password" ref={ el => password = el } placeholder="enter password" />
         <input type="submit" value="Login" />
+        <br/>{error}
       </form>
-      <h2>{error}</h2> 
+
     </div> 
   )
 }
 
 Login.propTypes = {
   login: PropTypes.func.isRequired,
-  error: PropTypes.string,
+  error: PropTypes.func.isRequired,
 }
 
 

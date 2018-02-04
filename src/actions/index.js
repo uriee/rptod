@@ -28,17 +28,23 @@ const log = (username,password) => dispatch => {
   return fetch(`${server}/login/${username}/${password}`)
     .then(response => response.json())
     .then(json => {
-          console.log("qqqqq----",json)
+      console.log("qqqqq----",json,json.length)
+      if(!(json.length === 0) ){
         const user = (json[0] ?  json[0].USR : -1)
         const username = (json[0] ?  json[0].USERNAME : '')
         dispatch(fetchActions(user))
         dispatch(setUser({user: user, username: username}))
+        dispatch(error(0,""))
+      }
+      else dispatch(error(1,"There is no such username / password"))
+      return json;
       })  
 }
 
-export const error =   errNum => ({
+export const error =   (errNum,errmsg) => ({
   type: ERROR,
-  errNum: errNum
+  errNum: errNum,
+  errmsg : errmsg
 })
 
 
@@ -67,7 +73,7 @@ export const requestActions = user => ({
 export const receiveSerials = (action, json) => ({
   type: RECEIVE_SERIALS,
   action,
-  serials: json.map(serial => serial),
+  serials: json.filter(serial => serial.QUANT > 0),
   receivedAt: Date.now()
 })
 
@@ -107,7 +113,6 @@ const fetchSerials = action => dispatch => {
 
 
 const fetchActions = user => dispatch => {
-  if(user < 0)  dispatch(error(1));  
     dispatch(requestActions(user))
     return fetch(`${server}/useraction/${user}`)
     .then(response => response.json())

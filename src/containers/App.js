@@ -36,7 +36,9 @@ class App extends Component {
 
   send = (obj,dispatch) => {
     console.log("OBJ:",obj)
-    this.props.dispatch(sendReport(obj,this.props.dispatch))
+    if(obj.quant > obj.limit) alert("The amount cannot be bigger than "+obj.limit/1000)
+    else if(obj.quant < 1) alert("The amount must be bigger than 0")
+    else this.props.dispatch(sendReport(obj,this.props.dispatch))
   }
 
   handleLogin = (obj) => {
@@ -48,10 +50,6 @@ class App extends Component {
     this.props.dispatch(setUser({user: -1, username: ''}))
   } 
 
-  handleError = () => {
-    window.alert("No such username or password.");
-    this.props.dispatch(setUser({user: -1, username: ''}))
-  } 
 
   handleRefreshClick = e => {
     e.preventDefault()
@@ -61,13 +59,13 @@ class App extends Component {
   }
 
   render() {
-    const { selectedAction, serials, isFetching, lastUpdated, actions, user, username } = this.props
+    const { selectedAction, serials, isFetching, lastUpdated, actions, user, username, errmsg } = this.props
     const isEmpty = serials.length === 0
     console.log("aaaa",actions,)
     //[ 'None', 'FQC', 'SMT CS', 'WAVE SIDE 1', 'TU']
     return (
       <div>
-      {(user === -1  ? <Login login={this.handleLogin} /> : <Logout username={username} logout={this.handleLogout} />)}
+      {(user === -1  ? <Login login={this.handleLogin} error={errmsg}/> : <Logout username={username} logout={this.handleLogout} />)}
       {(user === -1  ? <div/> : 
         <div>
         <Picker value={selectedAction}
@@ -100,7 +98,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  const { selectedAction, serialsByAction, actionsByLogin, logIn } = state
+  const { selectedAction, serialsByAction, actionsByLogin, logIn, error } = state
   const {
     isFetching,
     lastUpdated,
@@ -111,8 +109,9 @@ const mapStateToProps = state => {
   }
   console.log("--------")
   const actions = actionsByLogin.actions || []
-  const user = logIn.user || -1
+  const user =  parseInt(logIn.user,10) || -1
   const username = logIn.username
+  const errmsg = error.error
 
   return {
     selectedAction,
@@ -121,7 +120,8 @@ const mapStateToProps = state => {
     lastUpdated,
     actions,
     user,
-    username
+    username,
+    errmsg
   }
 }
 

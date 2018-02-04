@@ -11,7 +11,7 @@ let Qinp = ({serial,send}) => {
         if (!input.value.trim()) {
           return
         }
-        var ret = {serial: serial.SERIAL, action: serial.ACT, actname:serial.ACTNAME, quant: input.value}
+        var ret = {serial: serial.SERIAL, action: serial.ACT, actname:serial.ACTNAME, quant: input.value, limit: serial.QUANT}
         send(ret)
         input.value = ''
       }}>

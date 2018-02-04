@@ -1,97 +1,85 @@
-body {
-  font-family: $font-stack;
-  width: 100%;
-  font-size: 16px;
-  margin: 0;
-  padding: 0;
-  background: #FAFAFA;
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,700);
+
+body{
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  /*background: #c0392b;*/
+  font-family: Raleway;
+  /*color: white;*/
+  letter-spacing: 1px;
 }
 
-h1, h2 {
-  font-weight: 700;
-  color: $col-accent;
-  font-weight: 700;
-  font-size: 4em;
-  margin: 0;
-  padding: 0 20px;
-}
-
-body {
-  background:#EDEDED;
-  font-family:"HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
-  color:#222;
-  font-size:16px;
-}
-
-h1 {
-  text-align:center;
-  text-transform:uppercase;
-  font-size:15px;
-  font-weight:bold;
-  color:#666;
-  border-bottom:1px solid silver;
-  padding-bottom:10px;
-  margin-bottom:10px;
-}
-
-form {
-  width:500px;
-  margin:30px auto;
-  border:1px solid silver;
-  background:white;
+.card-form{
+  width: 500px;
+  border-radius: 10px;
+  /*background: white;*/
+  box-shadow: 0 27px 55px 0 rgba(0, 0, 0, 0.3), 0 17px 17px 0 rgba(0, 0, 0, 0.15);
   
-  border-radius:0.3em;
-  box-shadow:0 0 5px rgba(0,0,0,0.3);
-  padding:20px;
+  .form-title{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    font-size: 20px;
+    font-weight: bold;
+    /*background: #27ae60;*/
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .form-body{
+    padding: 10px;
+    
+    .row{
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      
+      input[type="text"]{
+        appearance: none;
+        width: 100%;
+        margin: 0 15px;
+        height: 35px;
+        padding: 5px 15px;
+        border-radius: 5px;
+        outline: none;
+        border: none;
+        /*background: #e8ebed;
+        color: #576366;
+        */
+        font-size: 14px;
+      }
+    }
+  }
+  
+  .rule{
+    height: 2px;
+    background: #e8ebed;
+    margin: 0px 35px;
+  }
+  
+  .form-footer{
+    margin: 0 25px 15px 25px;
+    padding: 15px 10px;
+    
+    a{
+      display: inline-block;
+      height: 40px;
+      line-height: 40px;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 15px;
+      background: #27ae60;
+      margin-right: 10px;
+      font-size: 14px;
+    }
+    
+    span{
+      margin-left: 8px;
+    }
+  }
+  
 }
 
-label {
-  display:block;
-  padding:15px 0 5px 0;
-}
-
-input[type=text],
-input[type=password], 
-select{
-  padding:3px; 
-  border:1px solid #7f9db9; /* Reseting border */
-}
-
-.btn-container label {
-  display:inline-block; 
-  padding:5px 0;
-}
-
-.rounded {
-  border-radius:30px;
-  text-indent:3px;
-}
-
-.radio-group.singleline .btn-container {
-   float:left;
-}
-
-.radio-group.singleline {
-  *zoom:1; 
-}
-
-.radio-group.singleline:after {
-  content:"";
-  display:table;
-  clear:both;
-} 
-
-.shadow {
-  box-shadow:inset 0 0 5px rgba(0,0,0,0.3); 
-}
-
-.shadow2 {
-  box-shadow:inset 0 2px 2px rgba(0,0,0,0.2); 
-}
-
-.required:after {
-  content:"*";
-  display:inline-block;
-  color:red;
-  padding-left:10px;
-}
